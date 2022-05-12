@@ -10,7 +10,8 @@ public class Extraccion implements TipoMovimiento {
   }
 
   public void impactarEnCuenta(Cuenta cuenta, double monto) {
-    cuenta.chequearCantidadDepositosDiarios();
+    cuenta.chequearMontoExtraccionDisponible(monto);
+    cuenta.chequearLimiteExtraccionDiario(monto);
     cuenta.extraerSaldo(monto);
   }
 

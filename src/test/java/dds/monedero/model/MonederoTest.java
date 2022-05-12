@@ -4,9 +4,14 @@ import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
 import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
+import dds.monedero.model.Movimiento.Deposito;
+import dds.monedero.model.Movimiento.Extraccion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class MonederoTest {
@@ -18,51 +23,53 @@ public class MonederoTest {
   }
 
   @Test
-  void Poner() {
-    cuenta.poner(1500);
+  void SePuedeHacerUnDepositoEnUnaCuentaSiEsteCumpleLasCondiciones() {
+    assertEquals(0, cuenta.getSaldo());
+    cuenta.operar( 1500, new Deposito());
+    assertEquals(1500, cuenta.getSaldo());
   }
 
   @Test
-  void PonerMontoNegativo() {
-    assertThrows(MontoNegativoException.class, () -> cuenta.poner(-1500));
+  void NoSePuedeRealizarUnDepositoPorUnMontoNegativo() {
+    assertThrows(MontoNegativoException.class, () -> cuenta.operar(-1500, new Deposito()));
   }
 
   @Test
-  void TresDepositos() {
-    cuenta.poner(1500);
-    cuenta.poner(456);
-    cuenta.poner(1900);
+  void SePuedenHacerHasta3DepositosPorDia() {
+    cuenta.operar(1500, new Deposito());
+    cuenta.operar(1500, new Deposito());
+    cuenta.operar(1500, new Deposito());
   }
 
   @Test
-  void MasDeTresDepositos() {
+  void NoSePuedenHacerMasDeTresDepositosPorDia() {
     assertThrows(MaximaCantidadDepositosException.class, () -> {
-          cuenta.poner(1500);
-          cuenta.poner(456);
-          cuenta.poner(1900);
-          cuenta.poner(245);
+      cuenta.operar(1500, new Deposito());
+      cuenta.operar(1500, new Deposito());
+      cuenta.operar(1500, new Deposito());
+      cuenta.operar(1500, new Deposito());
     });
   }
 
   @Test
-  void ExtraerMasQueElSaldo() {
+  void NoSePuedeExtraerUnMontoMayorAlMontoDisponible() {
     assertThrows(SaldoMenorException.class, () -> {
-          cuenta.depositarSaldo(90);
-          cuenta.sacar(1001);
+      cuenta.operar(150, new Deposito());
+      cuenta.operar(500, new Extraccion());
     });
   }
 
   @Test
-  public void ExtraerMasDe1000() {
+  public void NoSePuedeExtraerMasDe1000PesosDiarios() {
     assertThrows(MaximoExtraccionDiarioException.class, () -> {
-      cuenta.depositarSaldo(5000);
-      cuenta.sacar(1001);
+      cuenta.operar(1500, new Deposito());
+      cuenta.operar(1001, new Extraccion());
     });
   }
 
   @Test
-  public void ExtraerMontoNegativo() {
-    assertThrows(MontoNegativoException.class, () -> cuenta.sacar(-500));
+  public void NoSePuedeExtraerUnMontoNegativo() {
+    assertThrows(MontoNegativoException.class, () -> cuenta.operar(-1500, new Extraccion()));
   }
 
 }

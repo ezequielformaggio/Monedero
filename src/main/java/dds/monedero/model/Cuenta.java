@@ -4,8 +4,6 @@ import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
 import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
-import dds.monedero.model.Movimiento.Deposito;
-import dds.monedero.model.Movimiento.Extraccion;
 import dds.monedero.model.Movimiento.Movimiento;
 import dds.monedero.model.Movimiento.TipoMovimiento;
 
@@ -33,16 +31,15 @@ public class Cuenta {
   public void operar(double monto, TipoMovimiento tipo) {
     chequearMontoNegativo(monto);
     tipo.impactarEnCuenta(this,monto);
-    agregarMovimiento(LocalDate.now(), monto, new Deposito());
+    agregarMovimiento(LocalDate.now(), monto, tipo);
   }
 
   public void agregarMovimiento(LocalDate fecha, double monto, TipoMovimiento tipo) {
     Movimiento movimiento = new Movimiento(fecha, monto, tipo);
-    tipo.impactarEnCuenta(this, monto);
     movimientos.add(movimiento);
   }
 
-  public double getMontoExtraidoA(LocalDate fecha) {
+  public double getMontoExtraidoAFecha(LocalDate fecha) {
     return movimientos.stream()
         .filter(movimiento -> !movimiento.esDeposito() && movimiento.getFecha().equals(fecha))
         .mapToDouble(Movimiento::getMonto)
@@ -92,7 +89,7 @@ public class Cuenta {
   }
 
   public double getMontoDeExtraccionPosibleHoy() {
-    return 1000 - getMontoExtraidoA(LocalDate.now());
+    return 1000 - getMontoExtraidoAFecha(LocalDate.now());
   }
 
 }

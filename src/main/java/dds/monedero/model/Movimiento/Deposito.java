@@ -8,8 +8,7 @@ public class Deposito implements TipoMovimiento {
     this.operacion = Operacion.DEPOSITO;
   }
   public void impactarEnCuenta(Cuenta cuenta, double monto) {
-    cuenta.chequearMontoExtraccionDisponible(monto);
-    cuenta.chequearLimiteExtraccionDiario(monto);
+    cuenta.chequearCantidadDepositosDiarios();
     cuenta.depositarSaldo(monto);
   }
 
