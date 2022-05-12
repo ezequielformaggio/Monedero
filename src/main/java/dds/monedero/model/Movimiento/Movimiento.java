@@ -29,6 +29,6 @@ public class Movimiento {
   }
 
   public boolean esDeposito() {
-    return tipo.equals(new Deposito());
+    return tipo.getOperacion().equals(Operacion.DEPOSITO);
   }
 }

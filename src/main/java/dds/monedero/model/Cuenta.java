@@ -30,37 +30,11 @@ public class Cuenta {
     this.movimientos = movimientos;
   }
 
-  public void operar(double monto, TipoMovimiento operacion) {
-
+  public void operar(double monto, TipoMovimiento tipo) {
     chequearMontoNegativo(monto);
-
-    operacion.impactarEnCuenta(this,monto);
-
+    tipo.impactarEnCuenta(this,monto);
     agregarMovimiento(LocalDate.now(), monto, new Deposito());
   }
-
-  public void poner(double monto) {
-
-    chequearMontoNegativo(monto);
-
-    chequearCantidadDepositosDiarios(monto);
-
-    agregarMovimiento(LocalDate.now(), monto, new Deposito());
-
-  }
-
-  public void sacar(double monto) {
-
-    chequearMontoNegativo(monto);
-
-    chequearMontoExtraccionDisponible(monto);
-
-    chequearLimiteExtraccionDiario(monto);
-
-    agregarMovimiento(LocalDate.now(), monto, new Extraccion());
-  }
-
-
 
   public void agregarMovimiento(LocalDate fecha, double monto, TipoMovimiento tipo) {
     Movimiento movimiento = new Movimiento(fecha, monto, tipo);
@@ -97,7 +71,7 @@ public class Cuenta {
     }
   }
 
-  public void chequearCantidadDepositosDiarios(double monto) {
+  public void chequearCantidadDepositosDiarios() {
     if (movimientos.stream().filter(Movimiento::esDeposito).count() >= 3) {
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
     }

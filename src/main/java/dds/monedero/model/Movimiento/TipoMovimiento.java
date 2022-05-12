@@ -6,4 +6,6 @@ public interface TipoMovimiento {
 
   void impactarEnCuenta(Cuenta cuenta, double monto);
 
+  Operacion getOperacion();
+
 }
