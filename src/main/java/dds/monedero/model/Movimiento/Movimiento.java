@@ -1,7 +1,5 @@
 package dds.monedero.model.Movimiento;
 
-import dds.monedero.model.Cuenta;
-
 import java.time.LocalDate;
 
 public class Movimiento {
@@ -30,11 +28,7 @@ public class Movimiento {
     return this.fecha.equals(fecha);
   }
 
-  public double calcularValor(Cuenta cuenta) {
-    if (esDeposito) {
-      return cuenta.getSaldo() + getMonto();
-    } else {
-      return cuenta.getSaldo() - getMonto();
-    }
+  public boolean esDeposito() {
+    return tipo.equals(new Deposito());
   }
 }
