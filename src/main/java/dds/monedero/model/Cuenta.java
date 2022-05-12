@@ -4,6 +4,10 @@ import dds.monedero.exceptions.MaximaCantidadDepositosException;
 import dds.monedero.exceptions.MaximoExtraccionDiarioException;
 import dds.monedero.exceptions.MontoNegativoException;
 import dds.monedero.exceptions.SaldoMenorException;
+import dds.monedero.model.Movimiento.Deposito;
+import dds.monedero.model.Movimiento.Extraccion;
+import dds.monedero.model.Movimiento.Movimiento;
+import dds.monedero.model.Movimiento.TipoMovimiento;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,7 +38,8 @@ public class Cuenta {
       throw new MaximaCantidadDepositosException("Ya excedio los " + 3 + " depositos diarios");
     }
 
-    new Movimiento(LocalDate.now(), monto, true).agregateA(this);
+    agregarMovimiento(LocalDate.now(), monto, new Deposito());
+
   }
 
   public void sacar(double monto) {
@@ -50,11 +55,13 @@ public class Cuenta {
       throw new MaximoExtraccionDiarioException("No puede extraer mas de $ " + 1000
           + " diarios, límite: " + limite);
     }
-    new Movimiento(LocalDate.now(), monto, false).agregateA(this);
+
+    agregarMovimiento(LocalDate.now(), monto, new Extraccion());
   }
 
-  public void agregarMovimiento(LocalDate fecha, double cuanto, boolean esDeposito) {
-    Movimiento movimiento = new Movimiento(fecha, cuanto, esDeposito);
+  public void agregarMovimiento(LocalDate fecha, double monto, TipoMovimiento tipo) {
+    Movimiento movimiento = new Movimiento(fecha, monto, tipo);
+    tipo.impactarEnCuenta(this, monto);
     movimientos.add(movimiento);
   }
 
@@ -73,12 +80,16 @@ public class Cuenta {
     return saldo;
   }
 
-  public void setSaldo(double saldo) {
-    this.saldo = saldo;
+  public void extraerSaldo(double monto) {
+    this.saldo -= monto;
+  }
+
+  public void depositarSaldo(double monto) {
+    this.saldo += monto;
   }
 
   public void chequearMontoNegativo(double monto) {
-    if (monto <= 0) {
+    if (monto < 0) {
       throw new MontoNegativoException(monto + ": el monto a ingresar debe ser un valor positivo");
     }
   }
