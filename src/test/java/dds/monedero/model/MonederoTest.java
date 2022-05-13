@@ -1,9 +1,6 @@
 package dds.monedero.model;
 
-import dds.monedero.exceptions.MaximaCantidadDepositosException;
-import dds.monedero.exceptions.MaximoExtraccionDiarioException;
-import dds.monedero.exceptions.MontoNegativoException;
-import dds.monedero.exceptions.SaldoMenorException;
+import dds.monedero.exceptions.*;
 import dds.monedero.model.Movimiento.Deposito;
 import dds.monedero.model.Movimiento.Extraccion;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,12 +27,12 @@ public class MonederoTest {
 
   @Test
   void NoSePuedeRealizarUnDepositoPorUnMontoNegativo() {
-    assertThrows(MontoNegativoException.class, () -> cuenta.operar(-1500, new Deposito()));
+    assertThrows(CuentaException.class, () -> cuenta.operar(-1500, new Deposito()));
   }
 
   @Test
   void NoSePuedenHacerMasDeTresDepositosPorDia() {
-    assertThrows(MaximaCantidadDepositosException.class, () -> {
+    assertThrows(CuentaException.class, () -> {
       cuenta.operar(1500, new Deposito());
       cuenta.operar(1500, new Deposito());
       cuenta.operar(1500, new Deposito());
@@ -45,7 +42,7 @@ public class MonederoTest {
 
   @Test
   void NoSePuedeExtraerUnMontoMayorAlMontoDisponible() {
-    assertThrows(SaldoMenorException.class, () -> {
+    assertThrows(CuentaException.class, () -> {
       cuenta.operar(150, new Deposito());
       cuenta.operar(500, new Extraccion());
     });
@@ -53,7 +50,7 @@ public class MonederoTest {
 
   @Test
   public void NoSePuedeExtraerMasDe1000PesosDiarios() {
-    assertThrows(MaximoExtraccionDiarioException.class, () -> {
+    assertThrows(CuentaException.class, () -> {
       cuenta.operar(1500, new Deposito());
       cuenta.operar(1001, new Extraccion());
     });
@@ -61,7 +58,7 @@ public class MonederoTest {
 
   @Test
   public void NoSePuedeExtraerUnMontoNegativo() {
-    assertThrows(MontoNegativoException.class, () -> cuenta.operar(-1500, new Extraccion()));
+    assertThrows(CuentaException.class, () -> cuenta.operar(-1500, new Extraccion()));
   }
 
 }
