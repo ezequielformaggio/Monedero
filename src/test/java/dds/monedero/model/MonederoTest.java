@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MonederoTest {
   private Cuenta cuenta;
@@ -32,13 +31,6 @@ public class MonederoTest {
   @Test
   void NoSePuedeRealizarUnDepositoPorUnMontoNegativo() {
     assertThrows(MontoNegativoException.class, () -> cuenta.operar(-1500, new Deposito()));
-  }
-
-  @Test
-  void SePuedenHacerHasta3DepositosPorDia() {
-    cuenta.operar(1500, new Deposito());
-    cuenta.operar(1500, new Deposito());
-    cuenta.operar(1500, new Deposito());
   }
 
   @Test

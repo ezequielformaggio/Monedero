@@ -24,10 +24,6 @@ public class Cuenta {
     saldo = montoInicial;
   }
 
-  public void setMovimientos(List<Movimiento> movimientos) {
-    this.movimientos = movimientos;
-  }
-
   public void operar(double monto, TipoMovimiento tipo) {
     chequearMontoNegativo(monto);
     tipo.impactarEnCuenta(this,monto);
@@ -44,10 +40,6 @@ public class Cuenta {
         .filter(movimiento -> !movimiento.esDeposito() && movimiento.getFecha().equals(fecha))
         .mapToDouble(Movimiento::getMonto)
         .sum();
-  }
-
-  public List<Movimiento> getMovimientos() {
-    return movimientos;
   }
 
   public double getSaldo() {
